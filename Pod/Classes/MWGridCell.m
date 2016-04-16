@@ -36,8 +36,8 @@
         
         // Image
         _imageView = [UIImageView new];
-        _imageView.frame = self.bounds;
-        _imageView.contentMode = UIViewContentModeScaleAspectFill;
+        _imageView.frame = CGRectInset(self.bounds, 4.0, 4.0);
+        _imageView.contentMode = UIViewContentModeScaleAspectFit;// UIViewContentModeScaleAspectFill;
         _imageView.clipsToBounds = YES;
         _imageView.autoresizesSubviews = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self addSubview:_imageView];
@@ -95,11 +95,20 @@
     }
 }
 
+- (void)setIsHighlighted:(BOOL)isHighlighted
+{
+    if (isHighlighted) {
+        self.backgroundColor = [UIColor grayColor];
+    } else {
+        self.backgroundColor = [UIColor colorWithWhite:0.12 alpha:1];
+    }
+}
+
 #pragma mark - View
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _imageView.frame = self.bounds;
+    _imageView.frame = CGRectInset(self.bounds, 4.0, 4.0);
     _loadingIndicator.frame = CGRectMake(floorf((self.bounds.size.width - _loadingIndicator.frame.size.width) / 2.),
                                          floorf((self.bounds.size.height - _loadingIndicator.frame.size.height) / 2),
                                          _loadingIndicator.frame.size.width,

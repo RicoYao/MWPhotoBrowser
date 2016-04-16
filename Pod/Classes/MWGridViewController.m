@@ -47,8 +47,6 @@
             _margin = 0, _gutter = 1;
             _marginL = 0, _gutterL = 2;
         }
-
-        _initialContentOffset = CGPointMake(0, CGFLOAT_MAX);
  
     }
     return self;
@@ -61,6 +59,14 @@
     [self.collectionView registerClass:[MWGridCell class] forCellWithReuseIdentifier:@"GridCell"];
     self.collectionView.alwaysBounceVertical = YES;
     self.collectionView.backgroundColor = [UIColor blackColor];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.view layoutIfNeeded];
+    [self adjustOffsetsAsRequired];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -85,12 +91,6 @@
 
 - (void)adjustOffsetsAsRequired {
     
-    // Move to previous content offset
-    if (_initialContentOffset.y != CGFLOAT_MAX) {
-        self.collectionView.contentOffset = _initialContentOffset;
-        [self.collectionView layoutIfNeeded]; // Layout after content offset change
-    }
-    
     // Check if current item is visible and if not, make it so!
     if (_browser.numberOfPhotos > 0) {
         NSIndexPath *currentPhotoIndexPath = [NSIndexPath indexPathForItem:_browser.currentIndex inSection:0];
@@ -103,7 +103,7 @@
             }
         }
         if (!currentVisible) {
-            [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+            [self.collectionView scrollToItemAtIndexPath:currentPhotoIndexPath atScrollPosition:UICollectionViewScrollPositionTop animated:NO];
         }
     }
     
@@ -168,6 +168,13 @@
     } else {
         [photo loadUnderlyingImageAndNotify];
     }
+    
+    if (self.browser.currentIndex == indexPath.row) {
+        cell.isHighlighted = YES;
+    } else {
+        cell.isHighlighted = NO;
+    }
+    
     return cell;
 }
 
